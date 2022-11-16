@@ -1,0 +1,444 @@
+import React from "react";
+import {
+	StyleSheet,
+	Text,
+	View,
+	Image,
+	Dimensions,
+	ScrollView,
+	TouchableOpacity,
+	Alert
+} from "react-native";
+import { AntDesign, FontAwesome, Ionicons } from "@expo/vector-icons";
+import Constants from "expo-constants";
+import Colors from "../config/colors";
+import Configs from "../config/Configs";
+import Header from "../component/Header";
+import { StatusBar } from "expo-status-bar";
+import MapView, { PROVIDER_GOOGLE, Marker } from 'react-native-maps';
+import { namedDateTime } from "../utils/Util";
+import * as WebBrowser from 'expo-web-browser';
+import InvoicePrint from "../component/InvoicePrint";
+
+
+
+const windowwidth = Dimensions.get("screen").width;
+const windowheight = Dimensions.get("screen").height;
+
+var { width, height } = Dimensions.get('window');
+
+export default class RideDetails extends React.Component {
+	constructor(props) {
+		super(props);
+		this.state = {
+			rideData: props.route.params.item
+		}
+		this.mapRef = React.createRef();
+	}
+
+	componentDidMount() {
+		let point1 = { lat: this.state.rideData?.tripdata.pickup.lat, lng: this.state.rideData?.tripdata.pickup.lng };
+		let point2 = { lat: this.state.rideData?.tripdata.drop.lat, lng: this.state.rideData?.tripdata.drop.lng };
+		this.fitMap(point1, point2);
+	}
+
+	downloadInvoice = () => {
+		Alert.alert(
+			`Download Invoice ?`,
+			" ",
+			[
+				{
+					text: "Cancel",
+					onPress: () => console.log("Cancel Pressed"),
+					style: "cancel"
+				},
+				{ text: "OK", onPress: () => WebBrowser.openBrowserAsync(Configs.BASE_URL2 + '/invoice/' + this.state.rideData.bookingID) }
+			]
+		);
+	}
+
+	fitMap = (point1, point2) => {
+		setTimeout(() => {
+			this.mapRef.current.fitToCoordinates([{ latitude: point1.lat, longitude: point1.lng }, { latitude: point2.lat, longitude: point2.lng }], {
+				edgePadding: { top: 40, right: 40, bottom: 40, left: 40 },
+				animated: true,
+			})
+		}, 1000)
+	}
+
+	render = () => {
+		return (
+			<View style={styles.container}>
+				<Header
+					leftIconName={"arrow-back"}
+					leftButtonFunc={() => this.props.navigation.goBack()}
+					title={namedDateTime(this.state.rideData.currentTimeSeconds)}
+					subTitle={this.state.rideData.bookingID}
+				/>
+
+				<ScrollView>
+					<View>
+						<View style={[styles.mapcontainer, { height: height - 550 }]}>
+							<MapView
+								ref={this.mapRef}
+								style={styles.map}
+								provider={PROVIDER_GOOGLE}
+								initialRegion={{
+									latitude: this.state.rideData.tripdata.pickup.lat,
+									longitude: this.state.rideData.tripdata.pickup.lng,
+									latitudeDelta: 0.0922,
+									longitudeDelta: 0.0421
+								}}
+							>
+								<Marker
+									coordinate={{ latitude: this.state.rideData.tripdata.pickup.lat, longitude: this.state.rideData.tripdata.pickup.lng }}
+									title={this.state.rideData.tripdata.pickup.add}
+									description={"Pickup Location"}
+									pinColor={Colors.GREEN.default}
+								/>
+
+								<Marker
+									coordinate={{ latitude: this.state.rideData.tripdata.drop.lat, longitude: this.state.rideData.tripdata.drop.lng }}
+									title={this.state.rideData.tripdata.drop.add}
+									description={"Drop Location"}
+								/>
+								{this.state.rideData.estimate.waypoints ?
+									<MapView.Polyline
+										coordinates={this.state.rideData.estimate.waypoints}
+										strokeWidth={4}
+										strokeColor={Colors.black}
+									/>
+									: null}
+							</MapView>
+						</View>
+					</View>
+
+					<View style={styles.section}>
+						<View style={styles.driverDetails}>
+							<View style={styles.profileImageContainer}>
+								<Image
+									source={this.state.rideData?.driver_image ? { uri: this.state.rideData.driver_image } : require("../assets/profilePic.png")}
+									style={styles.ImageStyle}
+									resizeMode={"contain"}
+								/>
+							</View>
+							<View>
+								<Text style={styles.name}>{this.state.rideData.driver_name}</Text>
+								{/* <View style={styles.starRow}>
+									<Text style={styles.title}>You Rated </Text>
+									<AntDesign name="star" size={14} color={Colors.primary} />
+									<AntDesign name="star" size={14} color={Colors.primary} />
+									<AntDesign name="star" size={14} color={Colors.primary} />
+									<AntDesign name="star" size={14} color={Colors.primary} />
+									<AntDesign name="star" size={14} color={Colors.light} />
+								</View> */}
+							</View>
+						</View>
+						<View style={styles.row}>
+							<View style={styles.ImageContainer}>
+								<Image
+									source={require("../assets/taxi.png")}
+									style={styles.ImageStyle}
+									resizeMode={"contain"}
+								/>
+							</View>
+							<Text style={styles.name}>{this.state.rideData.service_type}</Text>
+							<Text style={{ color: "#ddd", marginHorizontal: 5 }}>|</Text>
+							<Text style={styles.name}>{this.state.rideData.car_type}</Text>
+						</View>
+						<View style={styles.row}>
+							<View style={styles.ImageContainer}>
+								<Image
+									source={require("../assets/cash.png")}
+									style={styles.ImageStyle}
+									resizeMode={"contain"}
+								/>
+							</View>
+							<Text style={styles.name}>₹ {this.state.rideData.estimate.estimateFare}</Text>
+						</View>
+
+						<View
+							style={{
+								paddingVertical: 15,
+								paddingHorizontal: 10,
+							}}
+						>
+							<View style={styles.location}>
+								<View style={styles.mapMarker}>
+									<FontAwesome name="map-marker" size={15} color="green" />
+								</View>
+								<View style={styles.address}>
+									<Text
+										style={styles.addressText}
+										ellipsizeMode="tail"
+										numberOfLines={2}
+									>
+										{this.state.rideData.currentAddress}
+									</Text>
+								</View>
+							</View>
+							<View style={styles.timeline}>
+								<Text style={styles.timelineItem}>{"."}</Text>
+								<Text style={styles.timelineItem}>{"."}</Text>
+								<Text style={styles.timelineItem}>{"."}</Text>
+								<Text style={styles.timelineItem}>{"."}</Text>
+								<Text style={styles.timelineItem}>{"."}</Text>
+							</View>
+							<View style={styles.location}>
+								<View style={styles.mapMarker}>
+									<FontAwesome name="map-marker" size={15} color="#d9534f" />
+								</View>
+								<View style={styles.address}>
+									<Text
+										style={styles.addressText}
+										ellipsizeMode="tail"
+										numberOfLines={2}
+									>
+										{this.state.rideData.destinationAddress}
+									</Text>
+								</View>
+							</View>
+						</View>
+						<View style={styles.distance}>
+							<View style={styles.distanceColumn1}>
+								<Text style={styles.caption}>{parseFloat(this.state.rideData.distance).toFixed(1)}km</Text>
+								<Text style={styles.title}>DISTANCE</Text>
+							</View>
+							<View style={styles.distanceColumn2}>
+								<Text style={styles.caption}>{this.state.rideData.duration ? parseFloat(this.state.rideData.duration).toFixed(0) > 59 ? `${parseFloat(this.state.rideData.duration / 60).toFixed(1)} hour` : `${parseFloat(this.state.rideData.duration).toFixed(0)} minutes` : `${0} minutes`}
+								</Text>
+								<Text style={styles.title}>DURATION</Text>
+							</View>
+						</View>
+						<View style={styles.billCard}>
+							<View style={styles.billHeading}>
+								<Text style={styles.name}>Bill Details</Text>
+							</View>
+							<View style={styles.billSec}>
+								<Text>Your Trip</Text>
+								<Text>₹ {this.state.rideData.estimate.estimateFare}</Text>
+							</View>
+							{/* <View style={styles.billSec}>
+								<Text>Rounded Off</Text>
+								<Text>-₹ 0.41</Text>
+							</View> */}
+							<View style={styles.billFoot}>
+								<View>
+									<Text style={styles.name}>Total Bill</Text>
+									{/* <Text style={styles.title}>Includes ₹ 18% Taxes</Text> */}
+								</View>
+								<Text style={styles.name}>₹ {this.state.rideData.estimate.estimateFare}</Text>
+							</View>
+
+							<View style={styles.billHeading}>
+								<Text style={styles.name}>Payment</Text>
+							</View>
+							<View style={styles.billFoot}>
+								<Text style={styles.name}>Cash</Text>
+								<Text style={styles.name}>₹ {this.state.rideData.estimate.estimateFare}</Text>
+							</View>
+							{this.state.rideData?.status == 'PAID' ? (
+								<InvoicePrint
+									rideData={this.state.rideData}
+								/>
+							) : null}
+
+						</View>
+					</View>
+				</ScrollView>
+			</View>
+		);
+	};
+}
+
+const styles = StyleSheet.create({
+	container: {
+		flex: 1,
+		backgroundColor: "white",
+	},
+
+	section: {
+		paddingHorizontal: 20,
+	},
+	row: {
+		flexDirection: "row",
+		//marginVertical: 10,
+		alignItems: "center",
+		borderBottomWidth: 1,
+		borderColor: Colors.textInputBorder,
+		paddingVertical: 15,
+	},
+	profileImageContainer: {
+		backgroundColor: Colors.background,
+		//borderWidth:1,
+		overflow: "hidden",
+		height: 70,
+		width: 70,
+		borderRadius: 70 / 2,
+		alignItems: "center",
+		justifyContent: "center",
+		marginRight: 10,
+	},
+	driverDetails: {
+		alignItems: "center",
+		flexDirection: "row",
+		paddingVertical: 15,
+		borderBottomWidth: 1,
+		borderColor: Colors.textInputBorder,
+		// borderTopWidth: 0.5
+	},
+	ImageContainer: {
+		marginRight: 10,
+		alignItems: "center",
+		justifyContent: "center",
+		// borderWidth: 1
+	},
+	ImageStyle: {
+		height: 70,
+		width: 70,
+		borderRadius: 60 / 2,
+	},
+	starRow: {
+		flexDirection: "row",
+		paddingTop: 5,
+	},
+	addressText: {
+		// borderWidth: 1,
+		fontSize: 13,
+		color: "#243224",
+	},
+	timeline: {
+		width: "10%",
+		alignItems: "center",
+		// borderWidth: 1
+	},
+	timelineItem: {
+		fontSize: 8,
+		lineHeight: 5,
+		fontWeight: "bold",
+	},
+	location: {
+		flexDirection: "row",
+		alignItems: "center",
+		//borderWidth: 1,
+		//marginHorizontal: 10
+	},
+	mapMarker: {
+		width: "10%",
+		alignItems: "center",
+		paddingVertical: 5,
+		//borderWidth: 1
+	},
+	address: {
+		width: "90%",
+	},
+	distance: {
+		flexDirection: "row",
+		marginHorizontal: 10,
+		paddingHorizontal: 10,
+		marginVertical: 10,
+		paddingVertical: 15,
+		borderRadius: 5,
+		backgroundColor: "white",
+		shadowColor: "#000",
+		shadowOffset: {
+			width: 0,
+			height: 2,
+		},
+		shadowOpacity: 0.25,
+		shadowRadius: 3.84,
+
+		elevation: 5,
+	},
+	distanceColumn1: {
+		borderRightWidth: 0.5,
+		borderColor: Colors.textInputBorder,
+		width: "50%",
+		alignItems: "center",
+	},
+	distanceColumn2: {
+		borderLeftWidth: 0.5,
+		borderColor: Colors.textInputBorder,
+		width: "50%",
+		alignItems: "center",
+	},
+	title: {
+		color: Colors.medium,
+		fontSize: 13,
+		//paddingVertical: 5
+	},
+	name: {
+		fontWeight: "bold",
+		fontSize: 16,
+	},
+	caption: {
+		fontSize: 13,
+	},
+	billCard: {
+		borderTopWidth: 5,
+		borderRadius: 5,
+		borderColor: Colors.primary,
+		marginVertical: 10,
+		paddingVertical: 10,
+		paddingHorizontal: 10,
+		backgroundColor: "white",
+		shadowColor: "#000",
+		shadowOffset: {
+			width: 0,
+			height: 2,
+		},
+		shadowOpacity: 0.25,
+		shadowRadius: 3.84,
+
+		elevation: 5,
+	},
+	billHeading: {
+		marginVertical: 5,
+	},
+	billSec: {
+		flexDirection: "row",
+		justifyContent: "space-between",
+		paddingVertical: 15,
+		borderBottomWidth: 1,
+		borderColor: Colors.textInputBorder,
+	},
+	billFoot: {
+		flexDirection: "row",
+		justifyContent: "space-between",
+		paddingVertical: 15,
+		// borderRadius: 10
+	},
+	comment: {
+		fontSize: 13,
+	},
+	button: {
+		paddingHorizontal: 10,
+		paddingVertical: 10,
+		backgroundColor: Colors.primary,
+		borderRadius: 5,
+	},
+	buttonText: {
+		fontSize: 15,
+		fontWeight: "bold",
+		textAlign: "center",
+	},
+	mapcontainer: {
+		flex: 1.5,
+		width: width,
+		height: 200,
+		borderWidth: 7,
+		borderColor: Colors.WHITE,
+		justifyContent: 'center',
+		alignItems: 'center',
+	},
+	mapDetails: {
+		backgroundColor: Colors.WHITE,
+		flex: 1,
+		flexDirection: 'column',
+	},
+	map: {
+		flex: 1,
+		...StyleSheet.absoluteFillObject,
+		overflow: 'hidden'
+	},
+});

@@ -1,0 +1,68 @@
+{
+  "expo": {
+    "name": "YLO Cabs",
+    "slug": "YLOCabs",
+    "version": "1.2.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "androidStatusBar": {
+      "backgroundColor": "#ffffff",
+      "translucent": false,
+      "barStyle": "dark-content"
+    },
+    "splash": {
+      "image": "./assets/splash.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#F3B40D"
+    },
+    "updates": {
+      "fallbackToCacheTimeout": 0
+    },
+    "assetBundlePatterns": [
+      "**/*"
+    ],
+    "ios": {
+      "supportsTablet": true
+    },
+    "plugins": [
+      [
+        "expo-notifications",
+        {
+          "icon": "./assets/pn-icon.png",
+          "color": "#fff3c1"
+        }
+      ]
+    ],
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#fff3c1"
+      },
+      "versionCode": 24,
+      "package": "com.ylocabs.rideo",
+      "googleServicesFile": "./google-services.json",
+      "useNextNotificationsApi": true,
+      "permissions": [
+        "NOTIFICATIONS",
+        "CAMERA",
+        "READ_CONTACTS",
+        "ACCESS_COARSE_LOCATION",
+        "ACCESS_FINE_LOCATION",
+        "FOREGROUND_SERVICE"
+      ],
+      "config": {
+        "googleMaps": {
+          "apiKey": "AIzaSyC2Fs7x6pczpiXikw0sLRapWHNbl1Ys3k0"
+        }
+      }
+    },
+    "web": {
+      "favicon": "./assets/favicon.png"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "67ebf067-16a3-48cd-84a4-02f15e12d087"
+      }
+    }
+  }
+}

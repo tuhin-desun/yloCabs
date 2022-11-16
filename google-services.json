@@ -1,0 +1,69 @@
+{
+  "project_info": {
+    "project_number": "131281460665",
+    "firebase_url": "https://ylocab-2e072-default-rtdb.firebaseio.com",
+    "project_id": "ylocab-2e072",
+    "storage_bucket": "ylocab-2e072.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:131281460665:android:436f5b4f61b8472c9a2a68",
+        "android_client_info": {
+          "package_name": "com.ylocabs.driver"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "131281460665-g43kq1jpj2re9cqnnvcdrvamfot1gvgj.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyANO15p4DBgr-5pYaszHxkAXa46ZZ0ZLY8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "131281460665-g43kq1jpj2re9cqnnvcdrvamfot1gvgj.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:131281460665:android:a256259fd1d165c29a2a68",
+        "android_client_info": {
+          "package_name": "com.ylocabs.rideo"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "131281460665-g43kq1jpj2re9cqnnvcdrvamfot1gvgj.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyANO15p4DBgr-5pYaszHxkAXa46ZZ0ZLY8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "131281460665-g43kq1jpj2re9cqnnvcdrvamfot1gvgj.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

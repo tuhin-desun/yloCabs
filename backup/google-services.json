@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "112736982248",
+    "project_id": "ylo-cabs",
+    "storage_bucket": "ylo-cabs.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:112736982248:android:774f3291e332b35fe4255d",
+        "android_client_info": {
+          "package_name": "com.desuntechnology.ylocabs"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "112736982248-8bk8g9341su9cih85dmcdhs82cblie5k.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBP1fmmDz-qClzArd5f2GkQoFw9S1_zMD0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "112736982248-8bk8g9341su9cih85dmcdhs82cblie5k.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
