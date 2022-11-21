@@ -221,7 +221,7 @@ export default class Dashboard extends React.Component {
       pickerConfig: {
         selectedDateTime: new Date(),
         dateModalOpen: false,
-        dateMode: 'date'
+        dateMode: "date",
       },
       bookLoading: false,
       bookLaterLoading: false,
@@ -262,11 +262,19 @@ export default class Dashboard extends React.Component {
       .catch((error) => console.log(error));
   };
 
-  componentDidUpdate(){
-    const {location,destinationLocation} = this.state;
-    if(location.hasOwnProperty("latitude") && destinationLocation.hasOwnProperty("latitude")){
-       let distance = GetDistance(location.latitude, location.longitude, destinationLocation.latitude, destinationLocation.longitude);
-      } 
+  componentDidUpdate() {
+    const { location, destinationLocation } = this.state;
+    if (
+      location.hasOwnProperty("latitude") &&
+      destinationLocation.hasOwnProperty("latitude")
+    ) {
+      let distance = GetDistance(
+        location.latitude,
+        location.longitude,
+        destinationLocation.latitude,
+        destinationLocation.longitude
+      );
+    }
   }
 
   exitApp = () => BackHandler.exitApp();
